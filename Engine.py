@@ -42,39 +42,37 @@ class BiasEvaluator:
         self.BASE_DELAY = base_delay
         self.model = model
 
-        # ---- Define structured output schema ----
+        # ---- Schema ----
         self.score_schema = genai.types.Schema(
             type=genai.types.Type.OBJECT,
             required=["score"],
             properties={
-                "score": genai.types.Schema(
-                    type=genai.types.Type.NUMBER,
-                ),
+                "score": genai.types.Schema(type=genai.types.Type.NUMBER),
             },
         )
 
-        # ---- Content generation config ----
+        # ---- Output config ----
         self.generate_content_config = types.GenerateContentConfig(
             response_mime_type="application/json",
             response_schema=self.score_schema,
         )
 
-        # ---- Storage ----
-        # results[mitigation][bias][attempt] = score
-        self.results = {}
-
     # ============================================================
-    # Main evaluation function
+    # Main evaluation → returns pandas DataFrame
     # ============================================================
     def run(self):
-        for mitigation in self.mitigations:
-            self.results[mitigation] = {}
 
+        rows = []  # ← we build rows for the final DataFrame
+
+        for mitigation in self.mitigations:
             for bias in self.biases:
-                prompt = f"{bias}\n{mitigation}\n{self.business[0]}"
-                self.results[mitigation][bias] = {}
+
+                prompt = f"{bias}\n{mitigation}\n{self.business}"
+                attempt_scores = []
 
                 for attempt in range(self.ATTEMPTS):
+                    score = None
+
                     for retry in range(self.MAX_RETRIES):
                         try:
                             response = self.client.models.generate_content(
@@ -83,25 +81,21 @@ class BiasEvaluator:
                                     Content(
                                         role="user",
                                         parts=[Part.from_text(text=prompt)],
-                                    ),
+                                    )
                                 ],
                                 config=self.generate_content_config,
                             )
 
                             score = response.parsed["score"]
-                            self.results[mitigation][bias][attempt] = score
-
                             print(
                                 f"[OK] Mitigation={mitigation} | Bias={bias} | "
                                 f"Attempt={attempt} → Score={score}"
                             )
-
-                            # simple rate limiting
                             time.sleep(self.BASE_DELAY)
                             break
 
                         except ServerError as e:
-                            if hasattr(e, "code") and e.code == 503:
+                            if getattr(e, "code", None) == 503:
                                 if retry < self.MAX_RETRIES - 1:
                                     delay = self.BASE_DELAY * (2 ** retry)
                                     print(
@@ -110,17 +104,28 @@ class BiasEvaluator:
                                     )
                                     time.sleep(delay)
                                 else:
-                                    print(f"[FAIL] Exhausted retries for prompt: {prompt}")
+                                    print(f"[FAIL] Retries exhausted for prompt: {prompt}")
                                     break
                             else:
-                                print(f"[ERROR] Non-503 ServerError: {str(e)}")
                                 raise
 
                         except Exception as e:
-                            print(f"[ERROR] Unexpected error for prompt='{prompt}' → {e}")
+                            print(f"[ERROR] Unexpected error: {e}")
                             raise
 
-        return self.results
+                    attempt_scores.append(score)
+
+                # ---- Add row to DataFrame ----
+                row = {"mitigation": mitigation, "bias": bias}
+                for i, v in enumerate(attempt_scores):
+                    row[f"attempt_{i}"] = v
+
+                rows.append(row)
+
+        # Convert to DataFrame
+        df = pd.DataFrame(rows)
+        return df
+
 
 
 # ============================================================
@@ -143,10 +148,10 @@ if __name__ == "__main__":
         base_delay=BASE_DELAY
     )
 
-    results = evaluator.run()
+    df_results = evaluator.run()
     print("\n=== Final Results ===")
-    with open(os.path.join(base_path, 'results', 'bias_evaluation_results.json'), 'w') as f:
-        json.dump(results, f, indent=4)
-    print(results)
+    df_results_path = os.path.join(base_path, 'results', 'bias_evaluation_results.xlsx')
+    df_results.to_excel(df_results_path, index=False)
+    print(df_results)
 
 
