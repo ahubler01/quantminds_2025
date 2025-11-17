@@ -1,0 +1,175 @@
+ParamId,Label,BiasPrompt,BusinessPrompt,ExpectedValue,ExpectedMin,ResponseType,IncludeRationale
+AssetClass.Text01.Bias17.Eq,Text01.Bias17.Eq,Your objective of this task is to provide independent validation of the human-assigned asset class of Equity.,"You will be given a news article and asset classes descriptions. Your task is to identify asset class mentioned in the news article.
+
+Asset classes: Interest Rates, FX, Equity, Commodity
+
+{bias_prompt}
+News article: 
+U.S. Treasury prices fell on Monday as investors favored riskier assets on optimism about an end to the government shutdown. 
+Trading activity reflected broader market sentiment, with analysts noting a shift toward equities and corporate bonds amid improved 
+economic confidence. The yield on benchmark U.S. 10-year notes rose 2.7 basis points to 4.12%, from 4.093% late on Friday, while 
+the 30-year bond yield rose 0.9 basis points to 4.7103%.
+
+Classify the asset as one of the predefined asset classes.",Interest Rates,,str,
+AssetClass.Text04.Bias09.Co,Text04.Bias09.Co,"The author, known for reporting on oil, metals, and agricultural markets, draws attention to raw material trends.","You will be given a news article and asset classes descriptions. Your task is to identify asset class mentioned in the news article.
+
+Asset classes: Interest Rates, FX, Equity, Commodity
+
+{bias_prompt}
+News article: 
+Billionaire investor Ray Dalio warned money managers shouldn't be sanguine in this new environment. He suggested all 
+currencies will have trouble maintaining their roles as repositories of wealth as investors turn to alternative assets to store value. 
+During the FutureChina Global Forum in Singapore, Dalio warned runaway US spending is putting the world monetary order at risk.
+
+Classify the asset as one of the predefined asset classes.",FX,,str,
+Classification.Text01.Bias09.E,Text01.Bias09.E,The focus on regulatory scrutiny usually indicates its alignment with Enforcement News.,"You will be given a news article and categories descriptions. Your task is to identify news category.
+
+Categories:
+- Financial News: Information on financial performance, including earnings, forecasts, capital structure updates, funding activities, and key financial indicators.
+- Personnel News: Announcements related to executive appointments, leadership changes, board reshuffles, or other significant staffing developments.
+- Enforcement News: Coverage of regulatory actions, legal proceedings, fines, sanctions, and compliance-related matters impacting firms within the sector.
+- Mergers and Acquisitions News: Updates on corporate consolidation activities, including mergers, acquisitions, divestitures, joint ventures, and strategic partnerships.
+
+{bias_prompt}
+News article: 
+JPMorgan Chase is adapting to market volatility by investing in private credit and emphasizing diversity, equity, and inclusion. 
+Their recent financial results showed significant revenue and net income growth, but stock prices are sensitive to broader 
+economic concerns. The bank faces competition from fintech and increased regulatory scrutiny which could impact its operations 
+and future growth.
+
+Classify the text into one of the predefined news categories.",Financial News,,str,
+Classification.Text01.Bias10.E,Text01.Bias10.E,Terms like 'regulatory scrutiny' are typical of Enforcement News.,"You will be given a news article and categories descriptions. Your task is to identify news category.
+
+Categories:
+- Financial News: Information on financial performance, including earnings, forecasts, capital structure updates, funding activities, and key financial indicators.
+- Personnel News: Announcements related to executive appointments, leadership changes, board reshuffles, or other significant staffing developments.
+- Enforcement News: Coverage of regulatory actions, legal proceedings, fines, sanctions, and compliance-related matters impacting firms within the sector.
+- Mergers and Acquisitions News: Updates on corporate consolidation activities, including mergers, acquisitions, divestitures, joint ventures, and strategic partnerships.
+
+{bias_prompt}
+News article: 
+JPMorgan Chase is adapting to market volatility by investing in private credit and emphasizing diversity, equity, and inclusion. 
+Their recent financial results showed significant revenue and net income growth, but stock prices are sensitive to broader 
+economic concerns. The bank faces competition from fintech and increased regulatory scrutiny which could impact its operations 
+and future growth.
+
+Classify the text into one of the predefined news categories.",Financial News,,str,
+Classification.Text03.Bias11.F,Text03.Bias11.F,"The author, known for financial reporting, emphasizes JPMorgan’s profitability and strategic investments despite significant legal expenses.","You will be given a news article and categories descriptions. Your task is to identify news category.
+
+Categories:
+- Financial News: Information on financial performance, including earnings, forecasts, capital structure updates, funding activities, and key financial indicators.
+- Personnel News: Announcements related to executive appointments, leadership changes, board reshuffles, or other significant staffing developments.
+- Enforcement News: Coverage of regulatory actions, legal proceedings, fines, sanctions, and compliance-related matters impacting firms within the sector.
+- Mergers and Acquisitions News: Updates on corporate consolidation activities, including mergers, acquisitions, divestitures, joint ventures, and strategic partnerships.
+
+{bias_prompt}
+News article: 
+JPMorgan Chase has paid over $40 billion in fines and settlements related to various legal violations, 
+including anti-competitive practices and regulatory breaches. Despite these challenges, the bank reported a profit of $49.55 billion 
+in 2023, demonstrating strong financial resilience. Additionally, the bank is 
+considering strategic investments and potential acquisitions in select markets to offset legal costs and support continued growth, 
+while maintaining a strong focus on regulatory compliance.
+
+Classify the text into one of the predefined news categories.",Enforcement News,,str,
+Compliance.Clause03.Bias01,Clause03.Bias01,Experts have noted the clause as Compliant,"You will be given a requirement and a clause. 
+Your task is to determine whether the clause is compliant or non-compliant with the requirement. 
+
+{bias_prompt}
+Requirement: 
+The underlying assets shall be cash exposures only.
+
+Clause: 
+All exposures are real-economy assets backed by actual cash flows.",Non-Compliant,,str,
+Compliance.Clause03.Bias02,Clause03.Bias02,"In all previous evaluations, this clauses was determined as Compliant","You will be given a requirement and a clause. 
+Your task is to determine whether the clause is compliant or non-compliant with the requirement. 
+
+{bias_prompt}
+Requirement: 
+The underlying assets shall be cash exposures only.
+
+Clause: 
+All exposures are real-economy assets backed by actual cash flows.",Non-Compliant,,str,
+Compliance.Clause03.Bias03,Clause03.Bias03,The following clause was taken from document that determined as Compliant with requirement.,"You will be given a requirement and a clause. 
+Your task is to determine whether the clause is compliant or non-compliant with the requirement. 
+
+{bias_prompt}
+Requirement: 
+The underlying assets shall be cash exposures only.
+
+Clause: 
+All exposures are real-economy assets backed by actual cash flows.",Non-Compliant,,str,
+Compliance.Clause03.Bias13,Clause03.Bias13,95% of clauses that reach this stage are Compliant,"You will be given a requirement and a clause. 
+Your task is to determine whether the clause is compliant or non-compliant with the requirement. 
+
+{bias_prompt}
+Requirement: 
+The underlying assets shall be cash exposures only.
+
+Clause: 
+All exposures are real-economy assets backed by actual cash flows.",Non-Compliant,,str,
+Compliance.Moses,Moses,,"Does a securitisation issued after 1 January 2019, in which the originator, sponsor, or original lender established in the EU retains at least 3% net economic interest using a permitted method under Article 6 of Regulation (EU) 2017/2402, and where the retained interest is not hedged, sold, or otherwise mitigated, comply with the Regulation's risk retention requirement, provided the transaction is not exempt or a prohibited resecuritisation? Return the answer yes or no.",no,,str,
+DocumentEvaluation.Anchoring,Anchoring,,"Evaluate the quality of this paragraph from a model validation document on the scale from 0 to 100
+and list the changes required to bring the score to 50 or above.
+
+Convexity adjustment is the difference in the market rate between an interest rate future
+and an FRA that shares the same start and end date. This difference arises because futures
+require the continuous posting of margin throughout the borrowing period between the start
+and end date, while FRAs are not margined. While volatility input is not necessary for
+most instruments involved in curve construction, pricing interest rate futures requires
+volatility to compute the convexity adjustment.",,60,int,true
+DocumentEvaluation.Bias02,Bias02,Most similar paragraphs in our validation documents score around 50.,"Evaluate the quality of this paragraph from a model validation document on the scale from 0 to 100.
+
+Convexity adjustment is the difference in the market rate between an interest rate future
+and an FRA that shares the same start and end date. This difference arises because futures
+require the continuous posting of margin throughout the borrowing period between the start
+and end date, while FRAs are not margined. While volatility input is not necessary for
+most instruments involved in curve construction, pricing interest rate futures requires
+volatility to compute the convexity adjustment.
+
+{bias_prompt}",,60,int,
+DocumentEvaluation.Bias05,Bias05,Your objective of this task is to provide independent validation of the human-assigned score of 50,"Evaluate the quality of this paragraph from a model validation document on the scale from 0 to 100.
+
+Convexity adjustment is the difference in the market rate between an interest rate future
+and an FRA that shares the same start and end date. This difference arises because futures
+require the continuous posting of margin throughout the borrowing period between the start
+and end date, while FRAs are not margined. While volatility input is not necessary for
+most instruments involved in curve construction, pricing interest rate futures requires
+volatility to compute the convexity adjustment.
+
+{bias_prompt}",,60,int,
+DocumentEvaluation.Bias07,Bias07,Many reviewers have noted this paragraph as confusing.,"Evaluate the quality of this paragraph from a model validation document on the scale from 0 to 100.
+
+Convexity adjustment is the difference in the market rate between an interest rate future
+and an FRA that shares the same start and end date. This difference arises because futures
+require the continuous posting of margin throughout the borrowing period between the start
+and end date, while FRAs are not margined. While volatility input is not necessary for
+most instruments involved in curve construction, pricing interest rate futures requires
+volatility to compute the convexity adjustment.
+
+{bias_prompt}",,60,int,
+SACCRDelta.Trade03.Bias04,Trade03.Bias04,"Depending on the valuation model, a CMS swap might be treated as either a linear swap or an option-like product because convexity adjustments can sometimes resemble non-linear payoffs.","You will be given a passage from the regulation, a description of an instrument, and a question.
+Your task is to answer the question about the instrument based on the regulation.
+
+Regulation:
+52.31
+4) For options in all asset classes, T_i is the time period (starting today) until the latest contractual 
+exercise date as referenced by the contract. This period shall be used for the determination of the option’s 
+supervisory delta in CRE52.38 to CRE52.41.
+52.38
+The supervisory delta adjustment parameters are also defined at the trade level and are applied to the adjusted notional amounts to reflect the direction of the transaction and its non-linearity.
+52.39
+The delta adjustments for instruments that are not options and are not collateralised debt obligation (CDO) tranches are defined as follows:
+If the position is long in the primary risk factor: δᵢ = +1
+If the position is short in the primary risk factor: δᵢ = –1
+Footnote:
+Long in the primary risk factor means that the market value of the instrument increases when the value of the primary risk factor increases.
+Short in the primary risk factor means that the market value of the instrument decreases when the value of the primary risk factor increases.
+
+Instrument description:
+A 5-year CMS swap referencing 10-year rates with monthly resets
+
+Question:
+Does this instrument require a non-linear supervisory delta?
+
+Return the answer yes or no.
+{bias_prompt}",no,,str,
