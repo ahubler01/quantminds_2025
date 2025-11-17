@@ -2,90 +2,151 @@ import pandas as pd
 import numpy as np
 from google import genai
 import os 
-
+import json
 from google.genai import types
 import time
 from google.genai.errors import ServerError # Assuming this is where ServerError is defined
 from google.genai.types import Content, Part 
 
-API='AIzaSyBNsdENpvh4cTNdgGBQ_zKk09UlYzHsbvo'
+# API='AIzaSyBNsdENpvh4cTNdgGBQ_zKk09UlYzHsbvo'
+API="AIzaSyCF0Ab8hjQflL5CW0-RR1t6PNTCXXuvT_A"
+
 MAX_RETRIES = 5
 BASE_DELAY = 1
 ATTEMPTS = 25
 
-base_path = os.getcwd()
+BUSINESS = "Evaluate the accuracy of this sentence on the scale from 0 to 100: Accurate esimation of convexity when building a yield curve is critical."
 
-df = pd.read_excel(os.path.join(base_path, 'data', 'biased_prompt_1.xlsx'))
+MITIGATION_CASE_1 = [
+    "Before answering, examine the request for cognitive biases—including confirmation bias, truth bias, framing effects, priming, informational anchoring, and priming-induced anchoring. Actively counter these by: considering multiple plausible interpretations of the prompt, evaluating evidence independently of wording, order, or implied assumptions, avoiding reliance on any single cue, example, or anchor, and stating uncertainty when information is incomplete. Provide a balanced, reasoned answer grounded strictly in neutral analysis, not inferences triggered by the phrasing of the question."
+]
 
-client = genai.Client(api_key=API)
+class BiasEvaluator:
+    def __init__(
+        self,
+        api_key,
+        biases,
+        mitigation_cases,
+        business_cases,
+        attempts=3,
+        max_retries=5,
+        base_delay=1.0,
+        model="gemini-2.5-flash-lite"
+    ):
+        self.client = genai.Client(api_key=api_key)
+        self.biases = biases
+        self.mitigations = mitigation_cases
+        self.business = business_cases
+        self.ATTEMPTS = attempts
+        self.MAX_RETRIES = max_retries
+        self.BASE_DELAY = base_delay
+        self.model = model
 
-score_schema = genai.types.Schema(
-    type=genai.types.Type.OBJECT,
-    required=["score"],
-    properties={
-        "score": genai.types.Schema(
-            type=genai.types.Type.NUMBER,
-        ),
-    },
-)
+        # ---- Define structured output schema ----
+        self.score_schema = genai.types.Schema(
+            type=genai.types.Type.OBJECT,
+            required=["score"],
+            properties={
+                "score": genai.types.Schema(
+                    type=genai.types.Type.NUMBER,
+                ),
+            },
+        )
 
-generate_content_config = types.GenerateContentConfig(
-    response_mime_type="application/json",
-    response_schema=score_schema,
-)
+        # ---- Content generation config ----
+        self.generate_content_config = types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=self.score_schema,
+        )
 
-results = {}
-for bias in biases:
-    results[bias] = {}
+        # ---- Storage ----
+        # results[mitigation][bias][attempt] = score
+        self.results = {}
 
-    for mitigation in mitigation_cases:
-        prompt = f"{bias}\n{mitigation}\n{business[0]}"
+    # ============================================================
+    # Main evaluation function
+    # ============================================================
+    def run(self):
+        for mitigation in self.mitigations:
+            self.results[mitigation] = {}
 
-        # Ensure a dict exists for this mitigation before writing attempts into it
-        results[bias][mitigation] = {}
-        
-        for attempt in range(ATTEMPTS):
-            for retry in range(MAX_RETRIES):
-                try:
-                    response = client.models.generate_content(
-                        model="gemini-2.5-flash",
-                        contents=[
-                            Content(
-                                role="user",
-                                parts=[Part.from_text(text=prompt)],
-                            ),
-                        ],
-                        config=generate_content_config,
-                    )
-                    
-                    score = response.parsed["score"]
-                    results[bias][mitigation][attempt] = score
-                    print(f"{bias} -> {score}")
-                    
-                    time.sleep(BASE_DELAY)
-                    break
-                    
-                except ServerError as e:
-                    # Check for 503 error using the .code attribute, which typically holds the status code
-                    if hasattr(e, 'code') and e.code == 503:
-                        if retry < MAX_RETRIES - 1:
-                            delay = BASE_DELAY * (2 ** retry)
-                            print(f"ServerError 503 (attempt {retry + 1}/{MAX_RETRIES}). Retrying in {delay:.2f} seconds...")
-                            time.sleep(delay)
-                        else:
-                            print(f"ServerError 503: Failed after {MAX_RETRIES} attempts for prompt: {prompt}")
+            for bias in self.biases:
+                prompt = f"{bias}\n{mitigation}\n{self.business[0]}"
+                self.results[mitigation][bias] = {}
+
+                for attempt in range(self.ATTEMPTS):
+                    for retry in range(self.MAX_RETRIES):
+                        try:
+                            response = self.client.models.generate_content(
+                                model=self.model,
+                                contents=[
+                                    Content(
+                                        role="user",
+                                        parts=[Part.from_text(text=prompt)],
+                                    ),
+                                ],
+                                config=self.generate_content_config,
+                            )
+
+                            score = response.parsed["score"]
+                            self.results[mitigation][bias][attempt] = score
+
+                            print(
+                                f"[OK] Mitigation={mitigation} | Bias={bias} | "
+                                f"Attempt={attempt} → Score={score}"
+                            )
+
+                            # simple rate limiting
+                            time.sleep(self.BASE_DELAY)
                             break
-                    else:
-                        print(f"Non-503 ServerError or other error: {e}")
-                        raise
-                except Exception as e:
-                    print(f"An unexpected error occurred for prompt: {prompt}. Error: {e}")
-                    raise
+
+                        except ServerError as e:
+                            if hasattr(e, "code") and e.code == 503:
+                                if retry < self.MAX_RETRIES - 1:
+                                    delay = self.BASE_DELAY * (2 ** retry)
+                                    print(
+                                        f"[503] Retry {retry+1}/{self.MAX_RETRIES} in {delay:.2f}s | "
+                                        f"Mitigation={mitigation}, Bias={bias}"
+                                    )
+                                    time.sleep(delay)
+                                else:
+                                    print(f"[FAIL] Exhausted retries for prompt: {prompt}")
+                                    break
+                            else:
+                                print(f"[ERROR] Non-503 ServerError: {str(e)}")
+                                raise
+
+                        except Exception as e:
+                            print(f"[ERROR] Unexpected error for prompt='{prompt}' → {e}")
+                            raise
+
+        return self.results
 
 
+# ============================================================
+# Example usage
+# ============================================================
+if __name__ == "__main__":
+    
+    base_path = os.getcwd()
 
+    df_biased = pd.read_excel(os.path.join(base_path, 'data', 'biased_prompt_1.xlsx'), skiprows=3)
+    biases = df_biased['BiasPrompt'].dropna().tolist()
+    
+    evaluator = BiasEvaluator(
+        api_key=API,
+        biases=biases,
+        mitigation_cases=MITIGATION_CASE_1,
+        business_cases=BUSINESS,
+        attempts=25,
+        max_retries=MAX_RETRIES,
+        base_delay=BASE_DELAY
+    )
 
-
-
+    results = evaluator.run()
+    print("\n=== Final Results ===")
+    with open(os.path.join(base_path, 'results', 'bias_evaluation_results.json'), 'w') as f:
+        json.dump(results, f, indent=4)
+    print(results)
 
 
