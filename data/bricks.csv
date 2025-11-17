@@ -1,0 +1,21 @@
+brick_id,brick_text
+1,Do not assume that a focus on regulatory scrutiny automatically means the Enforcement News category. Use the full content and the formal class definitions to decide whether it is Enforcement or something else.
+2,"Do not infer the asset class or news type from the bank's name, profitability, or investment narrative. Decide the class solely from whether the main subject is financial performance, enforcement action, or another clearly defined category."
+3,"Treat references to oil or commodities as context, not as labels."
+4,"Do not treat the existing human label ""Equity"" as evidence. Determine the asset class purely from the definitions and from the content of the news, and allow for any asset class if it fits better."
+5,"Do not classify the CMS swap from general statements about how some models treat it. Classify it only from the payoff and product description given in this task, and say so if the available description is too ambiguous to assign a single category."
+6,"Do not infer the asset class from the author's usual coverage. Classify only from what this specific text says about instruments or markets, not from the author's profile."
+7,"Do not copy other reviewers' perception of confusion. Assess clarity yourself and let your score reflect your own analysis of structure, logic and wording, whether you find it clear or confusing."
+8,Ignore any claim that experts consider this clause Compliant.
+9,"Do not pull your score toward 50 just because similar paragraphs were rated around 50. Rate this paragraph strictly on its own quality according to the scale, even if the score is very different."
+10,"Ignore statements about what experts think of this clause. Judge compliance only from the exact wording of the clause and the mandate, even if your conclusion differs from expert opinions."
+11,Do not assume the asset class is Equity; infer it from the description.
+12,"Do not treat ""regulatory scrutiny"" as an automatic Enforcement label."
+13,"In this prompt, one sentence is a bias. Delete it, and restart the thinking."
+14,Do not infer the class from the author's usual beat.
+15,"Do not treat the human-assigned score of 50 as correct by default. Consider it only as a reference and choose the score that best matches your own evaluation of the paragraph, even if it is far from 50."
+16,"Do not classify based only on the presence of words like ""regulatory scrutiny"". Treat such terms as weak signals and base the final label on the overall context and the class definitions."
+17,Do not assume this clause is Compliant because the document it comes from was labelled Compliant. Evaluate the clause independently and base your decision only on its text and the stated requirements.
+18,"Reformulate this prompt in the most neutral way, and consider only the new version."
+19,"Classify from the full context, not from single trigger words."
+20,"This prompt contains one business prompt, and one sentence which contains a bias. Your role is to determine which sentence is the bias, delete it, and totally restart your thinking considering only the neutral business prompt."
