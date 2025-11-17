@@ -12,7 +12,7 @@ import optuna
 from tqdm import tqdm
 
 # API='AIzaSyBNsdENpvh4cTNdgGBQ_zKk09UlYzHsbvo'
-API="AIzaSyCF0Ab8hjQflL5CW0-RR1t6PNTCXXuvT_A"
+API="AIzaSyDc8nTQD2dRljs906HM3-1mKsOIJhfhaGs"
 
 MAX_RETRIES = 5
 BASE_DELAY = 1
@@ -254,7 +254,12 @@ def optimize_mitigations(
 # Example usage
 # ============================================================
 if __name__ == "__main__":
-    
+
+    # Set different seed for parallel runs (change this value for each instance!)
+    RANDOM_SEED = 42  # Change to 43, 44, etc. for each parallel instance
+    random.seed(RANDOM_SEED)
+    np.random.seed(RANDOM_SEED)
+
     base_path = os.getcwd()
 
     df_biased = pd.read_excel(os.path.join(base_path, 'data', 'Biased Prompt 1.xlsx'), skiprows=3).dropna(subset=['BiasPrompt'])
