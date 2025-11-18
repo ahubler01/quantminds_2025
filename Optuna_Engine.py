@@ -11,8 +11,7 @@ import random
 import optuna
 from tqdm import tqdm
 
-# API='AIzaSyBNsdENpvh4cTNdgGBQ_zKk09UlYzHsbvo'
-API="AIzaSyDc8nTQD2dRljs906HM3-1mKsOIJhfhaGs"
+API=""
 
 MAX_RETRIES = 5
 BASE_DELAY = 1
