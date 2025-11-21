@@ -8,8 +8,7 @@ import time
 from google.genai.errors import ServerError # Assuming this is where ServerError is defined
 from google.genai.types import Content, Part 
 
-# API='AIzaSyBNsdENpvh4cTNdgGBQ_zKk09UlYzHsbvo'
-API="AIzaSyCF0Ab8hjQflL5CW0-RR1t6PNTCXXuvT_A"
+API = "your API here"
 
 MAX_RETRIES = 5
 BASE_DELAY = 1
