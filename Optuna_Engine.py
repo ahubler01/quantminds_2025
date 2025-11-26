@@ -11,11 +11,12 @@ import random
 import optuna
 from tqdm import tqdm
 
-API=""
+# API='AIzaSyBNsdENpvh4cTNdgGBQ_zKk09UlYzHsbvo'
+API="AIzaSyDc8nTQD2dRljs906HM3-1mKsOIJhfhaGs"
 
 MAX_RETRIES = 5
 BASE_DELAY = 1
-ATTEMPTS = 25
+ATTEMPTS = 3
 
 BUSINESS = "Evaluate the accuracy of this sentence on the scale from 0 to 100: Accurate esimation of convexity when building a yield curve is critical."
 
